@@ -45,26 +45,11 @@ jobs:
           pnpm run build
           > dist/.nojekyll
 
-      - name: 打包工件
-        shell: sh
-        if: runner.os == 'Linux'
-        run: |
-          tar \
-            --directory "./dist/" \
-            -cvf "$RUNNER_TEMP/artifact.tar" \
-            --exclude=.git \
-            --exclude=.github \
-            .
-        env:
-          INPUT_PATH: ./build
-
-      - name: 上传工件
-        uses: actions/upload-artifact@v3
+      - name: 上传 Pages 工件
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: github-pages
-          path: ${{ runner.temp }}/artifact.tar
-          retention-days: 1
-          if-no-files-found: error
+          path: ./dist
 
   deploy:
     needs: build
@@ -78,4 +63,4 @@ jobs:
     steps:
       - name: 部署到 GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
